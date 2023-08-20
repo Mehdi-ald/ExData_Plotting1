@@ -1,0 +1,10 @@
+PowerData <- read.table("./household_power_consumption.txt", sep = ";", header = TRUE)
+PowerData$Date <- as.Date(PowerData$Date, "%d/%m/%Y")
+library(dplyr)
+Subset_PowerData <- filter(PowerData, Date == as.Date("2007-02-01") | Date == as.Date("2007-02-02"))
+Subset_PowerData$Full_Time <- as.POSIXlt(paste(Subset_PowerData$Date, Subset_PowerData$Time, sep = " "))
+Subset_PowerData$Global_active_power <- as.numeric(Subset_PowerData$Global_active_power, na.rm = TRUE)
+png("Plot_2.png", width = 480, height = 480)
+with(Subset_PowerData, plot(Full_Time, Global_active_power,
+                            xlab = "Day", ylab = "Global Active Power (kilowatts)", main = "Global Active Power", type = "l", cex.lab = 0.5))
+dev.off()

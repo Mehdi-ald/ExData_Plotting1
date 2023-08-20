@@ -1,0 +1,26 @@
+PowerData <- read.table("./household_power_consumption.txt", sep = ";", header = TRUE)
+PowerData$Date <- as.Date(PowerData$Date, "%d/%m/%Y")
+library(dplyr)
+Subset_PowerData <- filter(PowerData, Date == as.Date("2007-02-01") | Date == as.Date("2007-02-02"))
+Subset_PowerData$Full_Time <- as.POSIXlt(paste(Subset_PowerData$Date, Subset_PowerData$Time, sep = " "))
+Subset_PowerData$Global_active_power <- as.numeric(Subset_PowerData$Global_active_power, na.rm = TRUE)
+Subset_PowerData$Sub_metering_1 <- as.numeric(Subset_PowerData$Sub_metering_1, na.rm = TRUE)
+Subset_PowerData$Sub_metering_2 <- as.numeric(Subset_PowerData$Sub_metering_2, na.rm = TRUE)
+Subset_PowerData$Sub_metering_3 <- as.numeric(Subset_PowerData$Sub_metering_3, na.rm = TRUE)
+Subset_PowerData$Global_intensity <- as.numeric(Subset_PowerData$Global_intensity, na.rm = TRUE)
+Subset_PowerData$Global_reactive_power <- as.numeric(Subset_PowerData$Global_reactive_power, na.rm = TRUE)
+Subset_PowerData$Voltage <- as.numeric(Subset_PowerData$Voltage, na.rm = TRUE)
+png("Plot_4.png", width = 480, height = 480)
+par(mfrow = c(2,2))
+with(Subset_PowerData, plot(Full_Time, Global_active_power,
+                            xlab = "", ylab = "Global Active Power (kilowatts)", type = "l", cex.lab  = 0.7))
+with(Subset_PowerData, plot(Full_Time, Voltage,
+                            xlab = "datetime", ylab = "Voltage", type = "l", cex.lab  = 0.7))
+with(Subset_PowerData, plot(Full_Time, Sub_metering_1,
+                            xlab = "", ylab = "Energy Sub Metering", type = "l", cex.lab  = 0.7))
+lines(Subset_PowerData$Full_Time, Subset_PowerData$Sub_metering_2, col = "red", type = "l")
+lines(Subset_PowerData$Full_Time, Subset_PowerData$Sub_metering_3, col = "blue", type = "l")
+legend("topright", c("Sub metering 1", "Sub metering 2", "Sub metering 3"), col = c("black", "red", "blue"), lty = 1, lwd = 2, cex = 0.7)
+with(Subset_PowerData, plot(Full_Time, Global_reactive_power,
+                            xlab = "datetime", ylab = "Global Rective Power", type = "l", cex.lab  = 0.7))
+dev.off()
